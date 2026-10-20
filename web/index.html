@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>duckPI Pedigree Review</title><style>
+    :root { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color:#142735; background:#f4f7f9; font-synthesis:none; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-width:320px; }
+    button, input { font:inherit; }
+    button { cursor:pointer; }
+    .shell { max-width:1760px; margin:auto; padding:0 30px 26px; }
+    .topbar { height:66px; border-bottom:1px solid #e1e9ee; background:#fff; }
+    .top-inner { max-width:1760px; height:100%; margin:auto; padding:0 30px; display:flex; align-items:center; justify-content:space-between; }
+    .brand { display:flex; align-items:center; gap:10px; color:#173b4b; font-weight:750; font-size:21px; letter-spacing:-.7px; }
+    .brand-mark { width:32px; height:32px; border-radius:9px; background:#0f5c6b; display:grid; place-items:center; }
+    .brand-mark svg { width:23px; height:23px; }
+    .brand em { font-style:normal; color:#1b8591; }
+    .top-center { color:#566b78; font-size:14px; font-weight:600; }
+    .top-right { display:flex; align-items:center; gap:16px; font-size:13px; color:#607480; }
+    .version { padding:6px 10px; color:#2d6170; border:1px solid #d7e5e9; background:#f2fafb; border-radius:7px; font-weight:650; }
+    .page-intro { display:flex; justify-content:space-between; align-items:flex-end; gap:18px; padding:24px 0 18px; }
+    h1 { margin:0 0 5px; font-size:28px; font-weight:760; letter-spacing:-.9px; line-height:1.18; }
+    .subtitle { margin:0; color:#677986; font-size:14px; line-height:1.5; }
+    .action { border:1px solid #cbdce3; border-radius:9px; padding:10px 14px; background:#fff; color:#20566a; display:flex; align-items:center; gap:9px; font-size:13px; font-weight:700; box-shadow:0 1px 1px #0d33440a; }
+    .action:hover,.action:focus-visible { background:#f4fafb; border-color:#80aeb9; }
+    .action svg { width:16px; height:16px; }
+    .metrics { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:12px; }
+    .metric { background:#fff; border:1px solid #e0e8ed; border-radius:11px; padding:15px 19px; min-height:87px; box-shadow:0 2px 7px #2b52630a; }
+    .metric-head { color:#647784; font-size:12px; font-weight:680; letter-spacing:.04em; text-transform:uppercase; }
+    .metric-value { margin-top:7px; display:flex; align-items:baseline; gap:7px; font-size:25px; font-weight:750; letter-spacing:-.7px; line-height:1; font-variant-numeric:tabular-nums; }
+    .metric-value small { font-size:12px; font-weight:540; color:#7b8b94; letter-spacing:0; }
+    .metric.orange .metric-value { color:#bc6327; }
+    .sources { display:flex; gap:14px; align-items:center; min-height:54px; padding:8px 15px; border-radius:10px; border:1px solid #dfebef; background:#eef5f7; margin-bottom:14px; }
+    .sources-label { color:#3d6473; font-size:12px; font-weight:760; text-transform:uppercase; letter-spacing:.055em; white-space:nowrap; margin-right:4px; }
+    .source { display:flex; align-items:center; gap:8px; color:#405e6b; font-size:13px; padding-right:17px; border-right:1px solid #cedee4; }
+    .source:last-child { border:0; }
+    .source i { width:7px; height:7px; background:#659bab; border-radius:50%; flex:none; }
+    .source b { font-weight:690; color:#244959; }
+    .workspace { display:grid; grid-template-columns:minmax(0,1fr) 330px; gap:14px; align-items:stretch; }
+    .panel { background:white; border:1px solid #e0e8ed; border-radius:12px; box-shadow:0 2px 8px #2b52630a; overflow:hidden; }
+    .panel-head { min-height:64px; padding:14px 18px; display:flex; justify-content:space-between; align-items:center; gap:12px; border-bottom:1px solid #e9eff2; }
+    .panel-head h2 { margin:0 0 3px; font-size:16px; line-height:1.2; font-weight:740; letter-spacing:-.2px; }
+    .panel-head p { margin:0; color:#758793; font-size:12px; }
+    .graph-panel { min-height:494px; display:flex; flex-direction:column; }
+    .graph-head { padding:15px 20px 13px; }
+    .graph-title { display:flex; flex-wrap:wrap; align-items:baseline; column-gap:10px; row-gap:2px; }
+    .graph-title strong { font-size:16px; letter-spacing:-.2px; }
+    .graph-title span { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:13px; color:#26667a; }
+    .graph-sub { margin:4px 0 0; font-size:12px; color:#768993; }
+    .legend { display:flex; flex-wrap:wrap; gap:18px; align-items:center; font-size:12px; color:#556a75; white-space:nowrap; }
+    .legend-item { display:flex; align-items:center; gap:7px; }
+    .legend-line { width:23px; height:0; border-top:2px solid #7c9ead; }
+    .legend-line.candidate { border-top:2px dashed #c87334; }
+    .graph-stage { flex:1; min-height:390px; padding:2px 15px 9px; background-image:linear-gradient(180deg,#fff,#fff 85%,#fcfdfd); }
+    #pedigree { display:block; width:100%; height:100%; min-height:390px; }
+    .graph-note { min-height:32px; padding:7px 18px; border-top:1px solid #eef2f4; display:flex; align-items:center; color:#748690; font-size:12px; gap:6px; }
+    .graph-note svg { width:13px;height:13px;flex:none; }
+    .detail-panel { min-height:494px; display:flex; flex-direction:column; }
+    .detail-content { padding:18px 18px 14px; flex:1; }
+    .status { display:inline-flex; align-items:center; gap:7px; padding:6px 10px; border-radius:6px; background:#fff4e8; border:1px solid #f1d8c4; color:#ab5d21; font-size:12px; font-weight:710; }
+    .status:before { content:""; width:7px; height:7px; border-radius:50%; background:#d17a3c; }
+    .detail-title { margin:16px 0 7px; color:#142d3c; font-size:20px; font-weight:730; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; letter-spacing:-.6px; }
+    .detail-desc { margin:0; color:#71838e; font-size:13px; line-height:1.5; }
+    .keyline { border-top:1px solid #e9eff2; margin:18px 0; }
+    .section-label { text-transform:uppercase; letter-spacing:.07em; color:#8b9ba4; font-size:11px; font-weight:760; margin-bottom:13px; }
+    .info-row { display:flex; justify-content:space-between; gap:8px; align-items:baseline; margin:12px 0; color:#6f838e; font-size:13px; }
+    .info-row strong { color:#263e4b; font-weight:690; text-align:right; }
+    .info-row strong.mono { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:12px; }
+    .audit-box { margin-top:13px; border-left:3px solid #d79258; background:#fff9f3; padding:11px 12px; color:#795b42; font-size:12px; line-height:1.55; border-radius:0 6px 6px 0; }
+    .detail-foot { border-top:1px solid #e9eff2; padding:12px 18px; font-size:12px; color:#78909a; background:#fcfdfd; }
+    .table-panel { margin-top:14px; }
+    .table-head { min-height:64px; }
+    .table-head .count { color:#497080; font-size:12px; font-weight:700; background:#eff6f8; border-radius:30px; padding:5px 10px; white-space:nowrap; }
+    .table-wrap { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; font-size:12px; color:#38515e; font-variant-numeric:tabular-nums; }
+    thead { background:#f8fafb; }
+    th { text-align:left; font-size:11px; letter-spacing:.055em; text-transform:uppercase; color:#8596a0; font-weight:740; padding:10px 14px; white-space:nowrap; }
+    th:first-child,td:first-child { padding-left:20px; }
+    td { padding:8px 14px; border-top:1px solid #edf1f3; white-space:nowrap; }
+    tbody tr { transition:background .15s ease; cursor:pointer; }
+    tbody tr:hover { background:#f5fafb; }
+    tbody tr.selected { background:#fff7ef; box-shadow:inset 3px 0 #c97738; }
+    tbody tr:focus-visible { outline:2px solid #4593a5; outline-offset:-2px; }
+    .id { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:12px; letter-spacing:-.2px; }
+    .row-status { color:#a3602d; font-weight:670; }
+    .table-footer { padding:9px 20px 11px; border-top:1px solid #edf1f3; color:#8a9ba3; font-size:11px; }
+    .page-footer { display:flex; justify-content:space-between; padding:13px 2px 0; color:#9aacb3; font-size:11px; }
+    @media (max-width:1050px) { .shell,.top-inner{padding-left:18px;padding-right:18px}.workspace{grid-template-columns:1fr}.detail-panel{min-height:0}.detail-content{display:grid;grid-template-columns:1fr 1fr;gap:0 20px}.detail-content .keyline{display:none}.detail-content .section-label{margin-top:9px} }
+    @media (max-width:680px) { .top-center,.top-right .version{display:none}.shell,.top-inner{padding-left:12px;padding-right:12px}.page-intro{align-items:flex-start}.page-intro h1{font-size:24px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.metric{padding:12px}.sources{align-items:flex-start;flex-wrap:wrap;gap:8px}.sources-label{width:100%}.source{font-size:12px}.graph-panel,.detail-panel{min-height:0}.graph-stage,#pedigree{min-height:310px}.graph-head{display:block}.legend{margin-top:10px}.detail-content{display:block}.page-intro .action{padding:9px}.page-intro .action span{display:none} }
+
+.shell{max-width:1760px;margin:auto;padding:0 30px 24px}button,select,input,textarea{font:inherit}button{cursor:pointer}input,select,textarea{border:1px solid #cbdce3;border-radius:6px;padding:7px;max-width:100%}.inputs{padding:18px;margin:15px 0}.inputs-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}label{display:block;font-size:12px;color:#476574}label input,label select{display:block;margin-top:6px;width:100%;box-sizing:border-box}.toolbar{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin:12px 0}.message{white-space:pre-wrap;font-size:13px;color:#6b4e27;line-height:1.6}.error{color:#ab2424}#results[hidden]{display:none}.detail-title{overflow-wrap:anywhere;font-size:16px}.info-row{display:block;margin:9px 0}.info-row strong{display:block;text-align:left;margin-top:5px;overflow-wrap:anywhere}.table-wrap{max-height:410px;overflow:auto}#evidence{white-space:pre-wrap;overflow:auto;max-height:260px;font-size:11px;background:#f5f8fa;padding:10px}.graph-stage{overflow:auto}#pedigree{height:450px;min-width:600px}#notes{box-sizing:border-box;width:100%;margin-top:8px}select{background:white}.muted{color:#78909c;font-size:12px}.file-status{font-size:12px}#candidate-rows tr.selected{background:#fff4e8}.download{margin:0}details{margin:12px 0}summary{cursor:pointer}.review-status{background:#e9f5f4;padding:8px;font-size:12px;border-radius:6px}#search{min-width:240px}#offline-note{color:#8a5928}@media(max-width:800px){.inputs-grid{grid-template-columns:1fr}.shell{padding:0 12px 20px}.metrics{grid-template-columns:repeat(2,1fr)}}
+.file-picker{position:relative;display:flex;gap:10px;align-items:center;margin-top:6px;border:1px solid #cbdce3;border-radius:6px;padding:8px;background:white;min-height:38px;overflow:hidden}.file-picker>span:first-child{white-space:nowrap;font-weight:650;color:#20566a}.file-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#78909c}.file-picker input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;margin:0}.file-picker:focus-within{outline:2px solid #4593a5;outline-offset:2px}</style></head><body>
+<header class="topbar"><div class="top-inner"><div class="brand">duck<em>PI</em></div><div class="top-center">Pedigree review</div><span class="version">2.0.1 · local analysis</span></div></header>
+<main class="shell"><div class="page-intro"><div><h1>Pedigree review</h1><p class="subtitle">Inspect genomic candidates, competing parents and breeding records together.</p></div></div>
+<section class="panel inputs"><h2>Input data</h2><p class="muted">CSV or tab-separated tables. Files are processed on this computer. No genotype estimation is performed by this page.</p>
+<form id="analyze-form"><div class="inputs-grid"><label>Pairwise relationships (required)<span class="file-picker"><span>Choose file</span><span class="file-name" id="pairs-file-name">No file selected</span><input id="pairs-file" type="file" accept=".csv,.tsv,.txt" required></span></label><label>Sex and generation (required)<span class="file-picker"><span>Choose file</span><span class="file-name" id="metadata-file-name">No file selected</span><input id="metadata-file" type="file" accept=".csv,.tsv,.txt" required></span></label><label>Recorded pedigree (optional)<span class="file-picker"><span>Choose file</span><span class="file-name" id="recorded-file-name">No file selected</span><input id="recorded-file" type="file" accept=".csv,.tsv,.txt"></span></label><label>Relationship method<select id="method"><option value="KING">KING</option><option value="PLINK">PLINK</option><option value="EXTERNAL">External precomputed calls</option></select></label><label>Relationship column (optional except External)<input id="relation-column" type="text" placeholder="KING_Relation / PI_HAT_Relation"></label></div><div class="toolbar"><button class="action" id="analyze-btn">Analyze tables</button><label>Open exported duckPI review JSON<span class="file-picker"><span>Choose file</span><span class="file-name" id="json-file-name">No file selected</span><input id="json-file" type="file" accept=".json"></span></label></div></form><p id="offline-note" class="muted" hidden>Standalone report: open review JSON files here, or start python duckPI.py --serve to analyze new CSV/TSV inputs.</p><p id="message" class="message" role="status" aria-live="polite">Select relationship and individual tables to begin.</p></section>
+<div id="results" hidden>
+<section class="metrics"><div class="metric"><div class="metric-head">Individuals</div><div class="metric-value" id="individual-count"></div></div><div class="metric"><div class="metric-head">Generations</div><div class="metric-value" id="generation-count"></div></div><div class="metric"><div class="metric-head">Recorded links supported</div><div class="metric-value" id="supported-count"></div></div><div class="metric orange"><div class="metric-head">Competing parental roles</div><div class="metric-value" id="ambiguous-count"></div></div></section>
+<div class="sources"><span class="sources-label">Current analysis</span><span id="analysis-source"></span></div>
+<p class="muted">Manual decisions remain in page memory. Export review JSON before closing, reloading or analyzing another dataset; reopen that JSON to restore your notes.</p><div class="toolbar"><button type="button" class="action" id="export-json">Export review JSON</button><button type="button" class="action" id="export-pedigree">Export inferred pedigree TSV</button><button type="button" class="action" id="export-candidates">Export candidate evidence TSV</button><button type="button" class="action" id="export-reviewed">Export reviewed pedigree TSV</button><button type="button" class="action" id="export-svg">Export family SVG</button></div>
+<div class="workspace"><section class="panel graph-panel"><div class="panel-head"><div><h2>Family view</h2><span class="id" id="family-id"></span></div><div class="legend"><span>Solid: unique inferred</span><span style="color:#bc6327">Orange dashed: competing / record discrepancy</span><span>Gray dotted: recorded only</span></div></div><div class="toolbar" style="padding:0 18px"><label>Family scope<select id="family-scope"><option value="parents">Parents and ancestors</option><option value="context">Parents and offspring</option></select></label><span class="muted">Large families scroll horizontally; all candidates remain available in the table.</span></div><div class="graph-stage"><svg id="pedigree" role="img" aria-label="Selected family"></svg></div><div class="graph-note">Candidates require review. Inferred links are not independently confirmed parentage.</div></section>
+<aside class="panel detail-panel"><div class="panel-head"><h2>Relationship details</h2></div><div class="detail-content" id="detail"><p>Select a candidate row.</p></div></aside></div>
+<section class="panel table-panel"><div class="panel-head"><div><h2>Parent–offspring candidates</h2><p id="candidate-count"></p></div></div><div class="toolbar" style="padding:0 18px"><input id="search" aria-label="Search individual ID" placeholder="Search parent or offspring ID"><select id="filter" aria-label="Candidate filter"><option value="all">All candidates</option><option value="discrepancies">Record discrepancies</option><option value="ambiguous">Competing parents</option><option value="not_compared">No record comparison</option></select><label>Family individual<select id="focus-individual"></select></label></div><div class="table-wrap"><table><thead><tr><th>No.</th><th>Candidate parent</th><th>Offspring</th><th>Role</th><th>Assignment</th><th>Record comparison</th><th>Review</th></tr></thead><tbody id="candidate-rows"></tbody></table></div><div class="table-footer">All eligible candidates are retained. A unique candidate can fill one parental role independently of the other.</div></section>
+<details class="panel inputs"><summary>Excluded PO pairs and recorded links without support</summary><p class="muted">“Not supported” refers to the selected method and available inputs; it is not proof of an incorrect record.</p><pre id="issues" style="white-space:pre-wrap;max-height:350px;overflow:auto"></pre></details>
+</div><div class="page-footer"><span>duckPI · SNP-assisted pedigree review</span><span>Evidence and review decisions remain separate</span></div></main>
+<script>
+'use strict';
+let report = /*DUCKPI_PAYLOAD*/null;
+let selected = null, decisions = {}, currentChild = null;
+const $ = id => document.getElementById(id), ns = 'http://www.w3.org/2000/svg';
+const offline = location.protocol === 'file:';
+if (offline) { $('offline-note').hidden=false; $('analyze-btn').disabled=true; }
+function message(text, error=false){$('message').textContent=text;$('message').classList.toggle('error',error);}
+function key(c){return JSON.stringify([c.child,c.role,c.parent]);}
+function download(name, text, type){const url=URL.createObjectURL(new Blob([text],{type}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function tsv(rows,fields){const cell=v=>{v=typeof v==='object'&&v!==null?JSON.stringify(v):String(v??'');return /[\t\r\n"]/.test(v)?'"'+v.replaceAll('"','""')+'"':v;};return [fields,...rows.map(r=>fields.map(f=>r[f]))].map(r=>r.map(cell).join('\t')).join('\n')+'\n';}
+function validReport(r){return r&&r.schemaVersion===1&&r.metadata&&r.summary&&Array.isArray(r.pedigree)&&Array.isArray(r.candidatePairs)&&r.candidatePairs.every(c=>r.metadata[c.child]&&r.metadata[c.parent]&&['FatherID','MotherID'].includes(c.role)&&Array.isArray(c.evidence))&&Array.isArray(r.issues)&&Array.isArray(r.recordChecks);}
+function load(r){if(!validReport(r))throw Error('Not a valid duckPI schemaVersion 1 review report.'); const incoming={};
+ for(const c of r.candidatePairs){const d=(r.reviewDecisions||{})[key(c)];if(d&&['accepted','rejected','pending'].includes(d.status)){if(d.status!=='pending'&&!String(d.note||'').trim())throw Error('Accepted/rejected review decisions require a reason.');incoming[key(c)]={status:d.status,note:String(d.note||''),updatedAt:String(d.updatedAt||'')};}}
+ const accepted=new Set();for(const c of r.candidatePairs)if(incoming[key(c)]?.status==='accepted'){const k=JSON.stringify([c.child,c.role]);if(accepted.has(k))throw Error('Review JSON accepts multiple parents for the same role.');accepted.add(k);}
+ report=r;decisions=incoming;
+ selected=null;currentChild=null;$('detail').textContent='Select a candidate row to inspect evidence.';$('results').hidden=false;
+ $('individual-count').textContent=r.summary.individuals;$('generation-count').textContent=r.summary.generations;
+ $('supported-count').textContent=r.summary.recordedLinks?`${r.summary.supportedRecordedLinks} / ${r.summary.recordedLinks}`:'Not compared';
+ $('ambiguous-count').textContent=r.summary.ambiguousRoles;
+ $('analysis-source').textContent=`${r.method} · ${r.relationColumn} · ${r.summary.candidateLinks} eligible links · ${Object.keys(r.recordedPedigree).length?r.summary.additionalCandidates+' record discrepancies':'record comparison not assessed'}`;
+ $('focus-individual').replaceChildren();for(const p of r.pedigree){const o=document.createElement('option');o.value=p.ChildID;o.textContent=p.ChildID;$('focus-individual').append(o);}
+ $('issues').textContent=JSON.stringify({excludedPOPairs:r.issues,unsupportedRecordedLinks:r.recordChecks.filter(x=>x.status==='not_supported')},null,2);
+ message((r.warnings||[]).join('\n')||'Analysis complete. Review candidate links and export the evidence.');renderRows();
+ const focused=r.focusIndividual&&r.metadata[r.focusIndividual]?r.focusIndividual:null;
+ const focusPair=focused?r.candidatePairs.find(c=>c.parent===focused)||r.candidatePairs.find(c=>c.child===focused):null;
+ if(focusPair)choose(focusPair);else if(focused)drawFamily(focused);else if(r.candidatePairs.length)choose(r.candidatePairs[0]);else if(r.pedigree.length)drawFamily(r.pedigree[0].ChildID);
+}
+function renderRows(){const query=$('search').value.toLowerCase(),filter=$('filter').value;const rows=$('candidate-rows');rows.replaceChildren();let count=0;
+ for(const c of report.candidatePairs){if(!(`${c.parent} ${c.child}`.toLowerCase().includes(query)))continue;
+ if(filter==='discrepancies'&&!['unrecorded_role','child_not_recorded','recorded_conflict'].includes(c.comparison))continue;
+ if(filter==='ambiguous'&&c.assignment!=='ambiguous')continue;
+ if(filter==='not_compared'&&c.comparison!=='not_compared')continue;
+ count++;const tr=document.createElement('tr');tr.tabIndex=0;tr.classList.toggle('selected',selected===c);tr.setAttribute('aria-selected',String(selected===c));
+ [c.number,c.parent,c.child,c.role==='FatherID'?'Sire':'Dam',c.assignment,c.comparison,decisions[key(c)]?.status||'pending'].forEach((v,i)=>{const td=document.createElement('td');td.textContent=v;if(i===1||i===2)td.className='id';tr.append(td);});
+ tr.onclick=()=>choose(c);tr.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose(c);}};rows.append(tr);}
+ $('candidate-count').textContent=`${count} shown / ${report.candidatePairs.length} total eligible links`;
+}
+function choose(c){selected=c;drawFamily(c.child);renderRows();renderDetails(c);}
+function renderDetails(c){const pane=$('detail');pane.replaceChildren();
+ const title=document.createElement('h3');title.className='detail-title';title.textContent=c.child;pane.append(title);
+ for(const [name,value] of [['Candidate parent',c.parent],['Parental role',c.role],['Generations',`${report.metadata[c.parent].generation} → ${report.metadata[c.child].generation}`],['Assignment',c.assignment],['Recorded parent',c.recordedParent||'No recorded parent supplied'],['Comparison',c.comparison]]){const row=document.createElement('div');row.className='info-row';const span=document.createElement('span');span.textContent=name;const strong=document.createElement('strong');strong.textContent=value;row.append(span,strong);pane.append(row);}
+ const label=document.createElement('label');label.textContent='Manual review decision';const select=document.createElement('select');select.id='decision';for(const [v,t] of [['pending','Pending review'],['accepted','Accept candidate after review'],['rejected','Reject candidate after review']]){const o=document.createElement('option');o.value=v;o.textContent=t;select.append(o);}select.value=decisions[key(c)]?.status||'pending';label.append(select);pane.append(label);
+ const note=document.createElement('textarea');note.id='notes';note.placeholder='Review evidence / reason (required for accept or reject)';note.value=decisions[key(c)]?.note||'';note.setAttribute('aria-label','Review evidence or reason');pane.append(note);
+ const save=document.createElement('button');save.type='button';save.className='action';save.style.marginTop='8px';save.textContent='Save review decision';save.onclick=()=>{if(select.value!=='pending'&&!note.value.trim()){message('Add a review reason before accepting or rejecting a candidate.',true);return;}
+ if(select.value==='accepted'){const other=report.candidatePairs.find(x=>x!==c&&x.child===c.child&&x.role===c.role&&decisions[key(x)]?.status==='accepted');if(other){message(`Another ${c.role} candidate is already accepted for this offspring. Reset that decision first.`,true);return;}}
+ decisions[key(c)]={status:select.value,note:note.value.trim(),updatedAt:new Date().toISOString()};message('Review decision saved in this page. Export review JSON to retain decisions and notes.');renderRows();drawFamily(c.child);};pane.append(save);
+ const details=document.createElement('details');const summary=document.createElement('summary');summary.textContent='Raw pairwise evidence (original input rows)';details.append(summary);const pre=document.createElement('pre');pre.id='evidence';pre.textContent=JSON.stringify(c.evidence,null,2);details.append(pre);pane.append(details);
+}
+function drawFamily(child){currentChild=child;$('family-id').textContent=child;$('focus-individual').value=child;const svg=$('pedigree');svg.replaceChildren();
+ // Include all competing parents, their ancestors and children with co-parents.
+ const links=report.candidatePairs,ids=new Set([child]);let frontier=[child];for(let depth=0;depth<2;depth++){const next=[];for(const c of links)if(frontier.includes(c.child)){ids.add(c.parent);next.push(c.parent);}frontier=next;}
+ if($('family-scope').value==='context'){const children=new Set(links.filter(c=>c.parent===child).map(c=>c.child));for(const c of links)if(children.has(c.child)){ids.add(c.child);ids.add(c.parent);}}
+ const recordedLinks=[];for(const [recordChild,parents] of Object.entries(report.recordedPedigree)){if(ids.has(recordChild)){for(const [role,parent] of Object.entries(parents)){if(parent&&report.metadata[parent]){ids.add(parent);if(!links.some(c=>c.child===recordChild&&c.parent===parent))recordedLinks.push({parent,child:recordChild,role});}}}}
+ const visible=links.filter(c=>ids.has(c.child)&&ids.has(c.parent)),groups=new Map();for(const id of ids){const g=report.metadata[id].generation;if(!groups.has(g))groups.set(g,[]);groups.get(g).push(id);}
+ const gens=[...groups.keys()].sort((a,b)=>a-b),width=Math.max(1000,...[...groups.values()].map(x=>x.length*205+110)),height=Math.max(320,gens.length*160+60),positions={};svg.style.minWidth=width>1000?width+'px':'600px';svg.style.height=height+'px';svg.setAttribute('viewBox',`0 0 ${width} ${height}`);svg.setAttribute('aria-label',`Family around ${child}, including competing parental candidates`);
+ function el(tag,attrs,text){const e=document.createElementNS(ns,tag);for(const[k,v]of Object.entries(attrs))e.setAttribute(k,v);if(text!==undefined)e.textContent=text;svg.append(e);return e;}
+ el('rect',{width,height,fill:'#fff'});
+ gens.forEach((g,j)=>{const people=groups.get(g).sort();el('text',{x:16,y:45+j*160,fill:'#65818d','font-size':13},`G${g}`);people.forEach((id,i)=>positions[id]={x:100+(i+.5)*(width-110)/people.length,y:85+j*160});});
+ for(const c of recordedLinks){const a=positions[c.parent],b=positions[c.child];el('path',{d:`M ${a.x} ${a.y+29} C ${a.x} ${a.y+85}, ${b.x} ${b.y-85}, ${b.x} ${b.y-29}`,fill:'none',stroke:'#8b9299','stroke-width':1.5,'stroke-dasharray':'2 6'});}
+ for(const c of visible){const a=positions[c.parent],b=positions[c.child],d=decisions[key(c)]?.status,active=selected===c;const dashed=c.assignment==='ambiguous'||['recorded_conflict','unrecorded_role','child_not_recorded'].includes(c.comparison);el('path',{d:`M ${a.x} ${a.y+29} C ${a.x} ${a.y+85}, ${b.x} ${b.y-85}, ${b.x} ${b.y-29}`,fill:'none',stroke:d==='rejected'?'#b9bdc1':d==='accepted'?'#178775':dashed?'#c87335':'#8aa8b7','stroke-width':active?3:2,'stroke-dasharray':d==='rejected'?'2 7':dashed?'7 5':'',opacity:d==='rejected'?.5:1});}
+ for(const[id,p]of Object.entries(positions)){const info=report.metadata[id];el('rect',{x:p.x-94,y:p.y-29,width:188,height:58,rx:info.sex==='Female'?25:7,fill:id===child?'#eaf7f8':'#fff',stroke:id===child?'#267f8f':'#bdcfd7','stroke-width':id===child?2:1});el('text',{x:p.x,y:p.y-2,'text-anchor':'middle','font-size':12,'font-family':'ui-monospace,monospace',fill:'#244959'},id);el('text',{x:p.x,y:p.y+18,'text-anchor':'middle','font-size':11,fill:'#718994'},`${info.sex} · G${info.generation}`);}
+}
+$('analyze-form').onsubmit=async e=>{e.preventDefault();if(offline)return;$('analyze-btn').disabled=true;message('Analyzing tables…');try{const pairs=$('pairs-file').files[0],metadata=$('metadata-file').files[0],recorded=$('recorded-file').files[0];if(!pairs||!metadata)throw Error('Select the two required tables.');const res=await fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pairs:await pairs.text(),metadata:await metadata.text(),recorded:recorded?await recorded.text():null,method:$('method').value,relationColumn:$('relation-column').value.trim()})});const r=await res.json();if(!res.ok)throw Error(r.error||'Analysis failed.');load(r);}catch(err){message(err.message,true);}finally{$('analyze-btn').disabled=false;}};
+function showFileName(id){$(id+'-name').textContent=$(id).files[0]?.name||'No file selected';}
+for(const id of ['pairs-file','metadata-file','recorded-file'])$(id).onchange=()=>showFileName(id);
+$('json-file').onchange=async()=>{showFileName('json-file');try{load(JSON.parse(await $('json-file').files[0].text()));}catch(err){message(err.message,true);}};
+$('family-scope').onchange=()=>report&&currentChild&&drawFamily(currentChild);
+$('search').oninput=()=>report&&renderRows();$('filter').onchange=()=>report&&renderRows();$('focus-individual').onchange=()=>{selected=null;drawFamily($('focus-individual').value);renderRows();$('detail').textContent='Select a candidate row to inspect evidence.';};
+$('export-json').onclick=()=>download('duckPI_review.json',JSON.stringify({...report,reviewDecisions:decisions},null,2),'application/json');
+$('export-pedigree').onclick=()=>download('duckPI_inferred_pedigree.tsv',tsv(report.pedigree,['ChildID','FatherID','MotherID','FatherStatus','MotherStatus','FatherCandidates','MotherCandidates']),'text/tab-separated-values');
+$('export-candidates').onclick=()=>download('duckPI_candidates.tsv',tsv(report.candidatePairs.map(c=>({...c,review:decisions[key(c)]||{status:'pending'}})),['parent','child','role','assignment','comparison','recordedParent','evidence','review']),'text/tab-separated-values');
+$('export-reviewed').onclick=()=>{const rows=report.pedigree.map(p=>{const r={ChildID:p.ChildID,FatherID:null,MotherID:null};for(const role of ['FatherID','MotherID']){const c=report.candidatePairs.find(c=>c.child===p.ChildID&&c.role===role&&decisions[key(c)]?.status==='accepted');r[role]=c?c.parent:null;r[role+'ReviewStatus']=c?'manually_accepted':'unreviewed_or_rejected';}return r;});download('duckPI_manually_reviewed_pedigree.tsv',tsv(rows,['ChildID','FatherID','MotherID','FatherIDReviewStatus','MotherIDReviewStatus']),'text/tab-separated-values');};
+$('export-svg').onclick=()=>{const svg=$('pedigree').cloneNode(true);svg.setAttribute('xmlns',ns);download('duckPI_family.svg',new XMLSerializer().serializeToString(svg),'image/svg+xml');};
+if(report){try{load(report);}catch(err){message(err.message,true);}}
+</script></body></html>

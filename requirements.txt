@@ -1,0 +1,5 @@
+# Only needed for upstream estimator-result merging and optional PNG drawing.
+# The shared review engine, HTML report and local review server use Python stdlib.
+pandas>=1.5
+networkx>=2.8
+graphviz>=0.20

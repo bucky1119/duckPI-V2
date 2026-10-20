@@ -1,0 +1,305 @@
+{
+  "schemaVersion": 1,
+  "softwareVersion": "2.0.0",
+  "generatedAt": "2026-10-20T12:07:42.932889+00:00",
+  "method": "KING",
+  "relationColumn": "KING_Relation",
+  "metadata": {
+    "SIRE_A": {
+      "sex": "Male",
+      "generation": 1.0
+    },
+    "SIRE_B": {
+      "sex": "Male",
+      "generation": 1.0
+    },
+    "DAM_A": {
+      "sex": "Female",
+      "generation": 1.0
+    },
+    "DAM_B": {
+      "sex": "Female",
+      "generation": 1.0
+    },
+    "OFFSPRING_1": {
+      "sex": "Female",
+      "generation": 2.0
+    },
+    "OFFSPRING_2": {
+      "sex": "Male",
+      "generation": 2.0
+    },
+    "OFFSPRING_3": {
+      "sex": "Female",
+      "generation": 2.0
+    },
+    "ISOLATED": {
+      "sex": "Unknown",
+      "generation": 2.0
+    }
+  },
+  "candidatePairs": [
+    {
+      "parent": "DAM_A",
+      "child": "OFFSPRING_2",
+      "role": "MotherID",
+      "comparison": "recorded_conflict",
+      "recordedParent": "DAM_B",
+      "evidence": [
+        {
+          "sourceRow": 5,
+          "call": "PO",
+          "raw": {
+            "ID1": "DAM_A",
+            "ID2": "OFFSPRING_2",
+            "Kinship": "0.25",
+            "KING": "0.5",
+            "Z0": "0.01",
+            "PI_HAT": "0.50",
+            "KING_Relation": "PO",
+            "PI_HAT_Relation": "PO"
+          }
+        }
+      ],
+      "method": "KING",
+      "assignment": "unique_inferred",
+      "number": 1
+    },
+    {
+      "parent": "DAM_B",
+      "child": "OFFSPRING_3",
+      "role": "MotherID",
+      "comparison": "unrecorded_role",
+      "recordedParent": null,
+      "evidence": [
+        {
+          "sourceRow": 6,
+          "call": "PO",
+          "raw": {
+            "ID1": "DAM_B",
+            "ID2": "OFFSPRING_3",
+            "Kinship": "0.25",
+            "KING": "0.5",
+            "Z0": "0.01",
+            "PI_HAT": "0.51",
+            "KING_Relation": "PO",
+            "PI_HAT_Relation": "PO"
+          }
+        }
+      ],
+      "method": "KING",
+      "assignment": "unique_inferred",
+      "number": 2
+    },
+    {
+      "parent": "SIRE_A",
+      "child": "OFFSPRING_1",
+      "role": "FatherID",
+      "comparison": "recorded_match",
+      "recordedParent": "SIRE_A",
+      "evidence": [
+        {
+          "sourceRow": 2,
+          "call": "PO",
+          "raw": {
+            "ID1": "SIRE_A",
+            "ID2": "OFFSPRING_1",
+            "Kinship": "0.25",
+            "KING": "0.5",
+            "Z0": "0.01",
+            "PI_HAT": "0.49",
+            "KING_Relation": "PO",
+            "PI_HAT_Relation": "PO"
+          }
+        }
+      ],
+      "method": "KING",
+      "assignment": "unique_inferred",
+      "number": 3
+    },
+    {
+      "parent": "SIRE_A",
+      "child": "OFFSPRING_2",
+      "role": "FatherID",
+      "comparison": "recorded_match",
+      "recordedParent": "SIRE_A",
+      "evidence": [
+        {
+          "sourceRow": 3,
+          "call": "PO",
+          "raw": {
+            "ID1": "SIRE_A",
+            "ID2": "OFFSPRING_2",
+            "Kinship": "0.25",
+            "KING": "0.5",
+            "Z0": "0.01",
+            "PI_HAT": "0.50",
+            "KING_Relation": "PO",
+            "PI_HAT_Relation": "PO"
+          }
+        }
+      ],
+      "method": "KING",
+      "assignment": "ambiguous",
+      "number": 4
+    },
+    {
+      "parent": "SIRE_B",
+      "child": "OFFSPRING_2",
+      "role": "FatherID",
+      "comparison": "recorded_conflict",
+      "recordedParent": "SIRE_A",
+      "evidence": [
+        {
+          "sourceRow": 4,
+          "call": "PO",
+          "raw": {
+            "ID1": "SIRE_B",
+            "ID2": "OFFSPRING_2",
+            "Kinship": "0.24",
+            "KING": "0.48",
+            "Z0": "0.02",
+            "PI_HAT": "0.47",
+            "KING_Relation": "PO",
+            "PI_HAT_Relation": "PO"
+          }
+        }
+      ],
+      "method": "KING",
+      "assignment": "ambiguous",
+      "number": 5
+    }
+  ],
+  "pedigree": [
+    {
+      "ChildID": "DAM_A",
+      "FatherID": null,
+      "MotherID": null,
+      "FatherStatus": "missing",
+      "FatherCandidates": [],
+      "MotherStatus": "missing",
+      "MotherCandidates": []
+    },
+    {
+      "ChildID": "DAM_B",
+      "FatherID": null,
+      "MotherID": null,
+      "FatherStatus": "missing",
+      "FatherCandidates": [],
+      "MotherStatus": "missing",
+      "MotherCandidates": []
+    },
+    {
+      "ChildID": "SIRE_A",
+      "FatherID": null,
+      "MotherID": null,
+      "FatherStatus": "missing",
+      "FatherCandidates": [],
+      "MotherStatus": "missing",
+      "MotherCandidates": []
+    },
+    {
+      "ChildID": "SIRE_B",
+      "FatherID": null,
+      "MotherID": null,
+      "FatherStatus": "missing",
+      "FatherCandidates": [],
+      "MotherStatus": "missing",
+      "MotherCandidates": []
+    },
+    {
+      "ChildID": "ISOLATED",
+      "FatherID": null,
+      "MotherID": null,
+      "FatherStatus": "missing",
+      "FatherCandidates": [],
+      "MotherStatus": "missing",
+      "MotherCandidates": []
+    },
+    {
+      "ChildID": "OFFSPRING_1",
+      "FatherID": "SIRE_A",
+      "MotherID": null,
+      "FatherStatus": "unique_inferred",
+      "FatherCandidates": [
+        "SIRE_A"
+      ],
+      "MotherStatus": "missing",
+      "MotherCandidates": []
+    },
+    {
+      "ChildID": "OFFSPRING_2",
+      "FatherID": null,
+      "MotherID": "DAM_A",
+      "FatherStatus": "ambiguous",
+      "FatherCandidates": [
+        "SIRE_A",
+        "SIRE_B"
+      ],
+      "MotherStatus": "unique_inferred",
+      "MotherCandidates": [
+        "DAM_A"
+      ]
+    },
+    {
+      "ChildID": "OFFSPRING_3",
+      "FatherID": null,
+      "MotherID": "DAM_B",
+      "FatherStatus": "missing",
+      "FatherCandidates": [],
+      "MotherStatus": "unique_inferred",
+      "MotherCandidates": [
+        "DAM_B"
+      ]
+    }
+  ],
+  "recordedPedigree": {
+    "OFFSPRING_1": {
+      "FatherID": "SIRE_A",
+      "MotherID": null
+    },
+    "OFFSPRING_2": {
+      "FatherID": "SIRE_A",
+      "MotherID": "DAM_B"
+    },
+    "OFFSPRING_3": {
+      "FatherID": null,
+      "MotherID": null
+    }
+  },
+  "recordChecks": [
+    {
+      "child": "OFFSPRING_1",
+      "parent": "SIRE_A",
+      "role": "FatherID",
+      "status": "supported"
+    },
+    {
+      "child": "OFFSPRING_2",
+      "parent": "SIRE_A",
+      "role": "FatherID",
+      "status": "supported"
+    },
+    {
+      "child": "OFFSPRING_2",
+      "parent": "DAM_B",
+      "role": "MotherID",
+      "status": "not_supported"
+    }
+  ],
+  "issues": [],
+  "warnings": [
+    "Genomic candidates conflict with recorded parentage; records were not overwritten."
+  ],
+  "summary": {
+    "individuals": 8,
+    "generations": 2,
+    "candidateLinks": 5,
+    "ambiguousRoles": 1,
+    "recordedLinks": 3,
+    "supportedRecordedLinks": 2,
+    "additionalCandidates": 3,
+    "inputPairs": 5,
+    "excludedPOPairs": 0
+  }
+}
